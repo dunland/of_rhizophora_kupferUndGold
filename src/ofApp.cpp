@@ -3,34 +3,53 @@
 //--------------------------------------------------------------
 void ofApp::setup()
 {
+    ofSetFrameRate(30);
+
+    // setup gui:
+    gui.setup();
+    gui.add(zoom_y_speed.set("zoom y", 0, -100, 100));
+    gui.add(zoom_x_speed.set("zoom x", 0, -100, 100));
+
+    // load image:
     img.load("09.jpg");
-    img.resize(ofGetWidth(), img.getHeight() * ofGetWidth() / img.getWidth());
+    // img.resize(ofGetWidth(), img.getHeight() * ofGetWidth() / img.getWidth());
     imgPixels = img.getPixels();
 }
 
 //--------------------------------------------------------------
 void ofApp::update()
 {
-    // imgPixels = img.getPixels();
+    imgPixels = img.getPixels();
     // step = (step + 1) % sizeof(imgPixels);
     // ofPixel nextPixel = imgPixels[int(sizeof(imgPixels) / 2) + step];
     // nextPixel.setColor(imgPixels[int(sizeof(imgPixels) / 2)]).getColor();
     // ofLogNotice(imgPixels[int(sizeof(imgPixels) / 2)]);
+    image_x_position = (image_x_position + zoom_x_speed) % int(img.getWidth()) - CANVAS_HEIGHT;
+    image_y_position = (image_y_position + zoom_y_speed) % int(img.getHeight() - CANVAS_WIDTH);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw()
 {
-    for (int x = 0; x < img.getWidth(); x+=1)
-        for (int y = 0; y < img.getHeight(); y+=1)
-        {
-            ofColor color = img.getColor(x,y);
-            ofSetColor(color);
-            ofCircle(x,y,1);
-        }
+    // --------------------- points-based ----------------------
+    // for (int x = image_x_position; x < image_x_position + CANVAS_WIDTH; x+=1)
+    //     for (int y = image_y_position; y < image_y_position + CANVAS_HEIGHT; y+=1)
+    //     {
+    //         // slow:
+    //         // ofColor color = img.getColor(x,y);
+    //         ofColor color = imgPixels.getColor(x,y);
+    //         ofSetColor(color);
+    //         ofDrawCircle(x,y,1);
+    //         ofPoint(x,y);
+    //     }
 
-    ofSetColor(img.getColor(ofGetMouseX(), ofGetMouseY()));
-    ofDrawCircle(100, 100, 50);
+    // ofSetColor(imgPixels.getColor(ofGetMouseX(), ofGetMouseY()));
+    // ofDrawCircle(100, 100, 50);
+
+    // ----------------------- simple pan ----------------------
+    img.draw(image_x_position, image_y_position);
+
+    if (bShowGui) gui.draw();
 }
 
 //--------------------------------------------------------------
@@ -55,10 +74,14 @@ void ofApp::keyReleased(int key)
         ofToggleFullscreen();
         at_fullscreen = !at_fullscreen;
 
-        if (at_fullscreen)
-            img.resize(1920, img.getHeight() * 1920 / img.getWidth());
-        else
-            img.resize(1024, img.getHeight() * 1024 / img.getWidth());
+        // if (at_fullscreen)
+        //     img.resize(1920, img.getHeight() * 1920 / img.getWidth());
+        // else
+        //     img.resize(1024, img.getHeight() * 1024 / img.getWidth());
+        break;
+
+    case 'g':
+        bShowGui = !bShowGui;
         break;
 
     default:

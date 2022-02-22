@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxOsc.h"
+#include "ofxGui.h"
 #include "settings.h"
 
 class ofApp : public ofBaseApp{
@@ -24,7 +25,15 @@ class ofApp : public ofBaseApp{
 
 		ofImage img;
 		ofPixels imgPixels;
+
+		int image_x_position = 0;
+		int image_y_position = 0;
 		bool at_fullscreen = false;
 
 		ofxOscReceiver receiver;
+
+		ofxPanel gui;
+		ofParameter<int> zoom_y_speed = 0;
+		ofParameter<int> zoom_x_speed = 0;
+		bool bShowGui = true;
 };
